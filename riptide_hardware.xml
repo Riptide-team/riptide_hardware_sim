@@ -1,0 +1,17 @@
+<library path="riptide_hardware_sim">
+    <class name="riptide_hardware/IMUHardwareSim" type="riptide_hardware::IMUHardwareSim" base_class_type="hardware_interface::SensorInterface">
+        <description>
+            Simulation of the riptide's imu
+        </description>
+    </class>
+    <class name="riptide_hardware/ActuatorsHardwareSim" type="riptide_hardware::ActuatorsHardwareSim" base_class_type="hardware_interface::SystemInterface">
+        <description>
+            Simulation of the riptide's actuators
+        </description>
+    </class>
+    <class name="riptide_hardware/EchoSounderHardwareSim" type="riptide_hardware::EchoSounderHardwareSim" base_class_type="hardware_interface::SensorInterface">
+        <description>
+            Simulation of the riptide's echosounder
+        </description>
+    </class>
+</library>
