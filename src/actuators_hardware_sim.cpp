@@ -1,4 +1,4 @@
-#include "riptide_hardware/actuators_hardware_sim.hpp"
+#include "riptide_hardware_sim/actuators_hardware_sim.hpp"
 
 #include <string>
 
@@ -14,7 +14,7 @@
 #include <ignition/transport.hh>
 
 
-namespace riptide_hardware {
+namespace riptide_hardware_sim {
 
     CallbackReturn ActuatorsHardwareSim::on_init(const hardware_interface::HardwareInfo & info) {
         if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
@@ -155,9 +155,9 @@ namespace riptide_hardware {
 
         return hardware_interface::return_type::OK;
     }
-} // riptide_hardware
+} // riptide_hardware_sim
 
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(riptide_hardware::ActuatorsHardwareSim, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(riptide_hardware_sim::ActuatorsHardwareSim, hardware_interface::SystemInterface)

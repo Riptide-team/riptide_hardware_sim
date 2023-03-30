@@ -19,8 +19,17 @@ find_package(riptide_simulator REQUIRED)
 find_package(ignition-transport11 REQUIRED)
 find_package(ignition-msgs8 REQUIRED)
 
-# Compile riptide_hardware
-add_library(${PROJECT_NAME} SHARED src/imu_hardware_sim.cpp src/actuators_hardware_sim.cpp src/echosounder_hardware_sim.cpp)
+# Set hardware_sim_sources
+set(hardware_sim_sources
+  src/imu_hardware_sim.cpp
+  src/actuators_hardware_sim.cpp
+  src/echosounder_hardware_sim.cpp
+  src/pressure_hardware_sim.cpp
+  src/battery_hardware_sim.cpp
+)
+
+# Compile riptide_hardware_sim
+add_library(${PROJECT_NAME} SHARED ${hardware_sim_sources})
 target_include_directories(${PROJECT_NAME} PRIVATE include ${riptide_simulator_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ignition-transport11 ignition-msgs8)
 ament_target_dependencies(

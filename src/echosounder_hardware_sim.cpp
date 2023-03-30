@@ -1,4 +1,4 @@
-#include "riptide_hardware/echosounder_hardware_sim.hpp"
+#include "riptide_hardware_sim/echosounder_hardware_sim.hpp"
 
 #include <string>
 
@@ -15,7 +15,7 @@
 #include <ignition/transport/NodeOptions.hh>
 
 
-namespace riptide_hardware {
+namespace riptide_hardware_sim {
 
     CallbackReturn EchoSounderHardwareSim::on_init(const hardware_interface::HardwareInfo & info) {
         if (hardware_interface::SensorInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
@@ -96,9 +96,9 @@ namespace riptide_hardware {
         return hardware_interface::return_type::OK;
     }
 
-} // riptide_hardware
+} // riptide_hardware_sim
 
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(riptide_hardware::EchoSounderHardwareSim, hardware_interface::SensorInterface)
+PLUGINLIB_EXPORT_CLASS(riptide_hardware_sim::EchoSounderHardwareSim, hardware_interface::SensorInterface)

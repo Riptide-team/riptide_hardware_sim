@@ -1,17 +1,27 @@
 <library path="riptide_hardware_sim">
-    <class name="riptide_hardware/IMUHardwareSim" type="riptide_hardware::IMUHardwareSim" base_class_type="hardware_interface::SensorInterface">
+    <class name="riptide_hardware_sim/IMUHardwareSim" type="riptide_hardware_sim::IMUHardwareSim" base_class_type="hardware_interface::SensorInterface">
         <description>
-            Simulation of the riptide's imu
+            Simulation of the riptide's imu.
         </description>
     </class>
-    <class name="riptide_hardware/ActuatorsHardwareSim" type="riptide_hardware::ActuatorsHardwareSim" base_class_type="hardware_interface::SystemInterface">
+    <class name="riptide_hardware_sim/ActuatorsHardwareSim" type="riptide_hardware_sim::ActuatorsHardwareSim" base_class_type="hardware_interface::SystemInterface">
         <description>
-            Simulation of the riptide's actuators
+            Simulation of the riptide's actuators.
         </description>
     </class>
-    <class name="riptide_hardware/EchoSounderHardwareSim" type="riptide_hardware::EchoSounderHardwareSim" base_class_type="hardware_interface::SensorInterface">
+    <class name="riptide_hardware_sim/EchoSounderHardwareSim" type="riptide_hardware_sim::EchoSounderHardwareSim" base_class_type="hardware_interface::SensorInterface">
         <description>
-            Simulation of the riptide's echosounder
+            Simulation of the riptide's echosounder.
+        </description>
+    </class>
+    <class name="riptide_hardware_sim/PressureHardwareSim" type="riptide_hardware_sim::PressureHardwareSim" base_class_type="hardware_interface::SensorInterface">
+        <description>
+            Simulation of the riptide's pressure sensor.
+        </description>
+    </class>
+    <class name="riptide_hardware_sim/BatteryHardwareSim" type="riptide_hardware_sim::BatteryHardwareSim" base_class_type="hardware_interface::SensorInterface">
+        <description>
+            Simulation of the riptide's battery sensor.
         </description>
     </class>
 </library>

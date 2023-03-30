@@ -1,31 +1,27 @@
-#ifndef ACTUATORS_HARDWARE_SIM_HPP
-#define ACTUATORS_HARDWARE_SIM_HPP
+#pragma once
 
-#include <memory>
 #include <string>
+#include <memory>
 
 #include <ignition/transport.hh>
-#include <ignition/transport/NodeOptions.hh>
 
-#include "hardware_interface/system_interface.hpp"
+#include "hardware_interface/sensor_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
 
-namespace riptide_hardware {
+namespace riptide_hardware_sim {
 
     using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-    class ActuatorsHardwareSim : public hardware_interface::SystemInterface {
+    class EchoSounderHardwareSim : public hardware_interface::SensorInterface {
 
         public:
-            ActuatorsHardwareSim() {};
+            EchoSounderHardwareSim() {};
 
             CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
             std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-
-            std::vector<hardware_interface::CommandInterface> export_command_interfaces()override;
 
             CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
 
@@ -33,24 +29,16 @@ namespace riptide_hardware {
 
             hardware_interface::return_type read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
 
-            hardware_interface::return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
-
         private:
-            std::vector<double> hw_states_positions_;
-            std::vector<double> hw_commands_positions_;
+            double range_;
 
             // Ignition node
             std::shared_ptr<ignition::transport::Node> node;
 
-            // Namespace
+            // namespace
             std::string namespace_;
 
-            // Control topic
-            std::string control_topic;
-
-            // Control topic
-            std::string state_topic;
+            // state topic
+            std::string state_topic_;
     };
-} // riptide_hardware
-
-#endif // ACTUATORS_HARDWARE_SIM_HPP
+} // riptide_hardware_sim

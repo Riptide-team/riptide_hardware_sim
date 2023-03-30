@@ -1,5 +1,4 @@
-#ifndef IMU_HARDWARE_SIM_HPP
-#define IMU_HARDWARE_SIM_HPP
+#pragma once
 
 #include <string>
 #include <memory>
@@ -11,7 +10,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
 
-namespace riptide_hardware {
+namespace riptide_hardware_sim {
 
     using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -42,6 +41,4 @@ namespace riptide_hardware {
             // Imu topic
             std::string imu_topic;
     };
-} //sparton_ahrs_m1_simulation_hardware_interface
-
-#endif // IMU_HARDWARE_SIM_HPP
+} // riptide_hardware_sim

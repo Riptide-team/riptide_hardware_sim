@@ -1,4 +1,4 @@
-#include "riptide_hardware_sim/imu_hardware_sim.hpp"
+#include "riptide_hardware_sim/pressure_hardware_sim.hpp"
 
 #include <memory>
 #include <string>
@@ -13,10 +13,12 @@
 #include <ignition/transport.hh>
 #include <ignition/transport/NodeOptions.hh>
 
+#include "riptide_simulator/msgs/pressuremsg.pb.h"
+
 
 namespace riptide_hardware_sim {
 
-    CallbackReturn IMUHardwareSim::on_init(const hardware_interface::HardwareInfo & info) {
+    CallbackReturn PressureHardwareSim::on_init(const hardware_interface::HardwareInfo & info) {
         if (hardware_interface::SensorInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
             return hardware_interface::CallbackReturn::ERROR;
         }
@@ -25,9 +27,9 @@ namespace riptide_hardware_sim {
 
         namespace_ = info_.hardware_parameters["namespace"];
 
-        imu_topic = info_.hardware_parameters["imu_topic"];
+        pressure_topic = info_.hardware_parameters["pressure_topic"];
 
-        RCLCPP_DEBUG(rclcpp::get_logger("IMUHardwareSim"), "namespace: %s, imu_topic: %s", namespace_.c_str(), imu_topic.c_str());
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "namespace: %s, pressure_topic: %s", namespace_.c_str(), pressure_topic.c_str());
 
         ignition::transport::NodeOptions node_option;
         node_option.SetNameSpace(namespace_);
@@ -36,7 +38,7 @@ namespace riptide_hardware_sim {
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    std::vector<hardware_interface::StateInterface> IMUHardwareSim::export_state_interfaces() {
+    std::vector<hardware_interface::StateInterface> PressureHardwareSim::export_state_interfaces() {
         std::vector<hardware_interface::StateInterface> state_interfaces;
 
         // export sensor state interface
@@ -48,8 +50,8 @@ namespace riptide_hardware_sim {
         return state_interfaces;
     }
 
-    CallbackReturn IMUHardwareSim::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
-        RCLCPP_DEBUG(rclcpp::get_logger("IMUHardwareSim"), "Activating ...please wait...");
+    CallbackReturn PressureHardwareSim::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "Activating ...please wait...");
 
         // Set joint state
         for (uint i = 0; i < info_.sensors[0].state_interfaces.size(); ++i) {
@@ -57,46 +59,43 @@ namespace riptide_hardware_sim {
                 hw_sensor_states_[i] = 0;
         }
 
-        RCLCPP_DEBUG(rclcpp::get_logger("IMUHardwareSim"), "Successfully activated!");
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "Successfully activated!");
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    CallbackReturn IMUHardwareSim::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
-        RCLCPP_DEBUG(rclcpp::get_logger("IMUHardwareSim"), "Deactivating ...please wait...");
+    CallbackReturn PressureHardwareSim::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "Deactivating ...please wait...");
 
-        RCLCPP_DEBUG(rclcpp::get_logger("IMUHardwareSim"), "Successfully deactivated!");
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "Successfully deactivated!");
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::return_type IMUHardwareSim::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-        // Request imu infos from the simulator
-        ignition::msgs::IMU rep;
+    hardware_interface::return_type PressureHardwareSim::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+        // Request pressure from the simulator
+        riptide::msgs::PressureMsg rep;
         bool result;
         unsigned int timeout = 5000;
 
         // Request the imu service.
-        bool executed = node->Request(imu_topic, timeout, rep, result);
+        bool executed = node->Request(pressure_topic, timeout, rep, result);
 
         if (!executed) {
-            RCLCPP_FATAL(rclcpp::get_logger("IMUHardwareSim"), "Service call timed out");
+            RCLCPP_FATAL(rclcpp::get_logger("PressureHardwareSim"), "Service call timed out");
             return hardware_interface::return_type::ERROR;
         }
 
         if (!result) {
-            RCLCPP_FATAL(rclcpp::get_logger("IMUHardwareSim"), "Service call failed");
+            RCLCPP_FATAL(rclcpp::get_logger("PressureHardwareSim"), "Service call failed");
             return hardware_interface::return_type::ERROR;
         }
 
         // Set joint state
-        hw_sensor_states_[0] = rep.linear_acceleration().x();
-        hw_sensor_states_[1] = rep.linear_acceleration().y();
-        hw_sensor_states_[2] = rep.linear_acceleration().z();
-
-        hw_sensor_states_[3] = rep.angular_velocity().x();
-        hw_sensor_states_[4] = rep.angular_velocity().y();
-        hw_sensor_states_[5] = rep.angular_velocity().z();
+        hw_sensor_states_[0] = rep.pressure();
+        hw_sensor_states_[1] = rep.temperature();
+        hw_sensor_states_[2] = rep.depth();
+        hw_sensor_states_[3] = rep.altitude();
 
         return hardware_interface::return_type::OK;
     }
@@ -105,4 +104,4 @@ namespace riptide_hardware_sim {
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(riptide_hardware_sim::IMUHardwareSim, hardware_interface::SensorInterface)
+PLUGINLIB_EXPORT_CLASS(riptide_hardware_sim::PressureHardwareSim, hardware_interface::SensorInterface)
