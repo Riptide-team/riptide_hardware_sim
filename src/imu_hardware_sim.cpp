@@ -98,6 +98,11 @@ namespace riptide_hardware_sim {
         hw_sensor_states_[4] = rep.angular_velocity().y();
         hw_sensor_states_[5] = rep.angular_velocity().z();
 
+        hw_sensor_states_[6] = rep.orientation().x();
+        hw_sensor_states_[7] = rep.orientation().y();
+        hw_sensor_states_[8] = rep.orientation().z();
+        hw_sensor_states_[9] = rep.orientation().w();
+
         return hardware_interface::return_type::OK;
     }
 } // riptide_hardware_sim

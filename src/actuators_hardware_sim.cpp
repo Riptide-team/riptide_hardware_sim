@@ -127,7 +127,8 @@ namespace riptide_hardware_sim {
             return hardware_interface::return_type::ERROR;
         }
 
-        for (int i=0; i<rep.joint_size(); ++i) {
+        hw_states_positions_[0] = rep.joint(0).velocity();
+        for (int i=1; i<rep.joint_size(); ++i) {
             hw_states_positions_[i] = rep.joint(i).position();
         }
 
