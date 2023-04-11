@@ -92,10 +92,10 @@ namespace riptide_hardware_sim {
         }
 
         // Set joint state
-        hw_sensor_states_[0] = rep.pressure();
-        hw_sensor_states_[1] = rep.temperature();
-        hw_sensor_states_[2] = rep.depth();
-        hw_sensor_states_[3] = rep.altitude();
+        hw_sensor_states_[0] = rep.pressure();      // Pa
+        hw_sensor_states_[1] = rep.temperature();   // °C
+        hw_sensor_states_[2] = rep.depth();         // m
+        hw_sensor_states_[3] = rep.altitude();      // m
 
         return hardware_interface::return_type::OK;
     }
