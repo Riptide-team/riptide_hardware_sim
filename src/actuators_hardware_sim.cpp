@@ -73,6 +73,18 @@ namespace riptide_hardware_sim {
             info_.joints[i].name, info_.joints[i].state_interfaces[0].name, &hw_states_positions_[i]));
         }
 
+        // export RC Receiver state interfaces
+        for (uint i = 4; i<10; ++i) {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+            info_.sensors[0].name, info_.sensors[0].state_interfaces[i-4].name, &hw_states_positions_[i]));
+        }
+
+        // Multiplexer infos
+        for (uint i=0; i<2; ++i) {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+            info_.sensors[1].name, info_.sensors[1].state_interfaces[i].name, &hw_states_positions_[i+10]));
+        }
+
         return state_interfaces;
     }
 
