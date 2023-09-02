@@ -29,16 +29,22 @@ namespace riptide_hardware_sim {
 
             hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+            void callback(const ignition::msgs::Altimeter & msg);
+
         private:
             std::vector<double> hw_sensor_states_;
 
             // Ignition node
             std::shared_ptr<ignition::transport::Node> node;
 
-            // Namespace
-            std::string namespace_;
+            // Altimeter topic
+            std::string altimeter_topic;
 
-            // Pressure topic
-            std::string pressure_topic;
+            // Mutex
+            std::mutex mutex_;
+
+            // Depth feedback value
+            double depth_feedback_;
+
     };
 } // riptide_hardware

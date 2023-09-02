@@ -13,7 +13,7 @@
 #include <ignition/transport.hh>
 #include <ignition/transport/NodeOptions.hh>
 
-#include "riptide_simulator/msgs/pressuremsg.pb.h"
+#include <ignition/msgs/altimeter.pb.h>
 
 
 namespace riptide_hardware_sim {
@@ -25,15 +25,20 @@ namespace riptide_hardware_sim {
 
         hw_sensor_states_.resize(info_.sensors[0].state_interfaces.size(), std::numeric_limits<double>::quiet_NaN());
 
-        namespace_ = info_.hardware_parameters["namespace"];
+        if (info_.hardware_parameters.find("altimeter_topic") == info_.hardware_parameters.end()) {
+            RCLCPP_FATAL(
+                rclcpp::get_logger("PressureHardwareSim"),
+                "You need to specify the altimeter_topic in ros2_control urdf tag as param!"
+            );
+            return hardware_interface::CallbackReturn::ERROR;
+        }
 
-        pressure_topic = info_.hardware_parameters["pressure_topic"];
-
-        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "namespace: %s, pressure_topic: %s", namespace_.c_str(), pressure_topic.c_str());
+        RCLCPP_DEBUG(rclcpp::get_logger("PressureHardwareSim"), "pressure_topic: %s", (info_.hardware_parameters["altimeter_topic"]).c_str());
 
         ignition::transport::NodeOptions node_option;
-        node_option.SetNameSpace(namespace_);
         node = std::make_shared<ignition::transport::Node>(node_option);
+
+        node->Subscribe(info_.hardware_parameters["altimeter_topic"], &PressureHardwareSim::callback, this);
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -72,30 +77,17 @@ namespace riptide_hardware_sim {
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
+    void PressureHardwareSim::callback(const ignition::msgs::Altimeter & msg) {
+        std::scoped_lock<std::mutex> lock(mutex_);
+        depth_feedback_ = msg.vertical_position();
+    }
+
     hardware_interface::return_type PressureHardwareSim::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-        // Request pressure from the simulator
-        riptide::msgs::PressureMsg rep;
-        bool result;
-        unsigned int timeout = 5000;
-
-        // Request the imu service.
-        bool executed = node->Request(pressure_topic, timeout, rep, result);
-
-        if (!executed) {
-            RCLCPP_FATAL(rclcpp::get_logger("PressureHardwareSim"), "Service call timed out");
-            return hardware_interface::return_type::ERROR;
-        }
-
-        if (!result) {
-            RCLCPP_FATAL(rclcpp::get_logger("PressureHardwareSim"), "Service call failed");
-            return hardware_interface::return_type::ERROR;
-        }
+        // Locking mutex
+        std::scoped_lock<std::mutex> lock(mutex_);
 
         // Set joint state
-        hw_sensor_states_[0] = rep.pressure();      // Pa
-        hw_sensor_states_[1] = rep.temperature();   // °C
-        hw_sensor_states_[2] = rep.depth();         // m
-        hw_sensor_states_[3] = rep.altitude();      // m
+        hw_sensor_states_[0] = depth_feedback_;
 
         return hardware_interface::return_type::OK;
     }
